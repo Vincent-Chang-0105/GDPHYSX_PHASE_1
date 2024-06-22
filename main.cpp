@@ -40,7 +40,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(window_width, window_height, "Phase 1 : Magaling", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "Phase 1 : Chang_Magaling", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -87,7 +87,7 @@ int main(void)
 
     while (!glfwWindowShouldClose(window))
     {
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(0x00004000);
 
         curr_time = clock::now();
         auto dur = std::chrono::duration_cast<std::chrono::nanoseconds> (curr_time - prev_time);
