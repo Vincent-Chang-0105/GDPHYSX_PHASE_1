@@ -11,6 +11,7 @@
 #include "P6/RenderParticle.h"
 #include "Camera/OrthoCamera.h"
 #include "Camera/PerspectiveCamera.h"
+#include "Randomization/RandomGen.h"
 
 
 using namespace std::chrono_literals;
@@ -18,6 +19,9 @@ constexpr std::chrono::nanoseconds timestep(16ms);
 
 int main(void)
 {
+    int numObj;
+    std::cout << "Enter Number of Objects: ";
+    std::cin >> numObj;
 
     GLFWwindow* window;
     float window_width = 700;
@@ -31,7 +35,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(window_width, window_height, "PCO1 Abegail Laureen R. Magaling", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "Phase 1 : Chang_Magaling", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -43,12 +47,12 @@ int main(void)
 
     //OrthoCamera
     auto ortho_camera = new OrthoCamera();
-    ortho_camera->setCameraPosition(glm::vec3(0.0f, 0.0f, 30.0f));
+    ortho_camera->setCameraPosition(glm::vec3(0.0f, 0.0f, 350.0f));
     ortho_camera->setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
 
     //PerspectiveCamera
     auto pers_camera = new PerspectiveCamera();
-    pers_camera->setCameraPosition(glm::vec3(0, 0.f, 30.f));
+    pers_camera->setCameraPosition(glm::vec3(0, 0.f, 350.f));
     //pers_camera->setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
 
     auto pWorld = physics::PhysicsWorld();
@@ -66,25 +70,30 @@ int main(void)
 
     // Initialize RenderParticles
     std::list<RenderParticle*> RenderParticles;
-    std::chrono::nanoseconds spawnInterval = 20ms; // Time interval between spawns
+    std::chrono::nanoseconds spawnInterval = 200ms; // Time interval between spawns
     std::chrono::nanoseconds spawnTimer = 0ms;     // Timer to control when to spawn next particle
 
 
-    physics::PhysicsParticle p1 = physics::PhysicsParticle();
+    /*physics::PhysicsParticle p1 = physics::PhysicsParticle();
     p1.Position = physics::MyVector(0, 0, 0);
     p1.mass = 1;
-    p1.AddForce(physics::MyVector(0, 50, 0));
+    p1.AddForce(physics::MyVector(RandomGen().RandomizeForce(), RandomGen().RandomizeForce(), RandomGen().RandomizeForce()));
     pWorld.AddParticle(&p1);
 
-    physics::PhysicsParticle p2 = physics::PhysicsParticle();
-    p2.Position = physics::MyVector(-200, 200, 201);
-    p2.Velocity = p2.Position.direction().ScalarMultiplication(-80.f);
-    p2.Acceleration = p2.Position.direction().ScalarMultiplication(-14.f);
-    pWorld.AddParticle(&p2);
-
-    /*RenderParticle rp1 = RenderParticle(&p1, &sphere, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+    RenderParticle rp1 = RenderParticle(&p1, &sphere, glm::vec4(RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), 1.0f));
 
     RenderParticles.push_back(&rp1);*/
+
+    for (int i = 0; i < numObj; i++) {
+        physics::PhysicsParticle* p = new physics::PhysicsParticle();
+        p->Position = physics::MyVector(0, -100, 0);
+        p->mass = 1;
+        p->AddForce(physics::MyVector(RandomGen().RandomizeForce(), RandomGen().RandomizeYForce(), RandomGen().RandomizeForce()));
+        pWorld.AddParticle(p);
+
+        RenderParticle* rp = new RenderParticle(p, &sphere, glm::vec4(RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), 1.0f));
+        RenderParticles.push_back(rp);
+    }
 
     std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> startTime(4, clock::now());
     std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> endTime(4);
@@ -118,23 +127,27 @@ int main(void)
             pWorld.Update((float)ms.count() / 1000);
 
             // Update spawn timer
-            spawnTimer += dur;
-            std::cout << spawnTimer.count() << std::endl;
+            ////spawnTimer += dur;
+            // 
+            // 
+            //std::cout << spawnTimer.count() << std::endl;
+            // 
             // Spawn new RenderParticle if spawn interval has passed
-            if (spawnTimer >= spawnInterval)
-            {
-                physics::PhysicsParticle* particle = new physics::PhysicsParticle();
-                particle->Position = physics::MyVector(0, 0, 0);
-                particle->mass = 1;
-                particle->AddForce(physics::MyVector(0, 1000.f, 0));
-                pWorld.AddParticle(particle);
+            //if (spawnTimer >= spawnInterval)
+            //{
+            //    physics::PhysicsParticle* particle = new physics::PhysicsParticle();
+            //    particle->Position = physics::MyVector(0, 0, 0);
+            //    particle->mass = 1;
+            //    particle->AddForce(physics::MyVector(0, 1000.f, 0));
+            //    particle->AddLifeSpan();
+            //    pWorld.AddParticle(particle);
 
-                RenderParticle* renderParticle = new RenderParticle(particle, &sphere, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-                RenderParticles.push_back(renderParticle);
+            //    RenderParticle* renderParticle = new RenderParticle(particle, &sphere, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
+            //    RenderParticles.push_back(renderParticle);
 
-                // Reset spawn timer
-                spawnTimer = 0ms;
-            }
+            //    // Reset spawn timer
+            //    spawnTimer = 0ms;
+            //}
         }
 
         for (std::list<RenderParticle*>::iterator i = RenderParticles.begin(); i != RenderParticles.end(); i++) {

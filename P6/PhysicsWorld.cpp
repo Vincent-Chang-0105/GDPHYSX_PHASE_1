@@ -15,7 +15,7 @@ void PhysicsWorld::Update(float time)
 	UpdateParticleList();
 
 	forceRegistry.UpdateForces(time);
-
+	
 	for (std::list<PhysicsParticle*>::iterator p = Particles.begin(); p != Particles.end(); p++) {
 		(*p)->update(time);
 	}
