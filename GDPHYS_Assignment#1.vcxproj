@@ -152,6 +152,7 @@
     <ClCompile Include="P6\PhysicsWorld.cpp" />
     <ClCompile Include="P6\RenderParticle.cpp" />
     <ClCompile Include="Camera\PerspectiveCamera.cpp" />
+    <ClCompile Include="Randomization\RandomGen.cpp" />
     <ClCompile Include="Shader.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -190,6 +191,7 @@
     <ClInclude Include="P6\PhysicsWorld.h" />
     <ClInclude Include="P6\RenderParticle.h" />
     <ClInclude Include="Camera\PerspectiveCamera.h" />
+    <ClInclude Include="Randomization\RandomGen.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="tiny_obj_loader.h" />
   </ItemGroup>

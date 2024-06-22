@@ -17,14 +17,14 @@ namespace physics{
 
 			float damping = 0.9f;
 
-			float lifespan = 0;
+			float lifespan;
+
 		protected:
 			void UpdatePosition(float time);
 			void UpdateVelocity(float time);
-			
-			
 
 		public:
+			PhysicsParticle();
 			void update(float time);
 
 			//Forces
@@ -34,6 +34,8 @@ namespace physics{
 
 			//life
 			void AddLifeSpan();
+			void UpdateLifeSpan(float time);
+
 		public:
 			void Destroy();
 			bool IsDestroyed() { return isDestroyed; }

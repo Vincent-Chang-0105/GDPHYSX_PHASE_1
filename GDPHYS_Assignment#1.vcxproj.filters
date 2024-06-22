@@ -57,6 +57,9 @@
     <ClCompile Include="Camera\PerspectiveCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Randomization\RandomGen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="Shaders\sample.frag" />
@@ -100,6 +103,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Camera\PerspectiveCamera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Randomization\RandomGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
