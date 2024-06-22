@@ -4,8 +4,8 @@ RandomGen::RandomGen()
 {
 	this->Cmax = 1.0;
 	this->Cmin = 0.0;
-    this->pMax = 350.f;
-    this->pMin = -350.f;
+    this->pMax = 4000.f;
+    this->pMin = -4000.f;
 }
 
 double RandomGen::RandomizeColor()
@@ -43,7 +43,20 @@ float RandomGen::RandomizeYForce()
     std::mt19937 gen(rd());
 
     // Define the range [min, max]
-    std::uniform_real_distribution<> dis(50.f, 350.f);
+    std::uniform_real_distribution<> dis(2000.f, 8000.f);
+
+    return dis(gen);
+}
+
+int RandomGen::RandomizeScale()
+{
+    std::random_device rd;
+
+    // Use Mersenne Twister engine
+    std::mt19937 gen(rd());
+
+    // Define the range [min, max]
+    std::uniform_real_distribution<> dis(2.f, 10.f);
 
     return dis(gen);
 }

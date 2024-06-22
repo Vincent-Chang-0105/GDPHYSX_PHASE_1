@@ -12,12 +12,9 @@ public:
 
 	glm::vec4 Color;
 
-	RenderParticle(physics::PhysicsParticle* p, GameObject* obj)
-		: PhysicsParticle(p), RenderObject(obj), Color(glm::vec4(1.0f, 1.0f, 1.0f, 1.0f)) {
-		// Additional initialization code if needed
-	}
+	float scale;
 
-	RenderParticle(physics::PhysicsParticle* p, GameObject* obj, glm::vec4 c) : PhysicsParticle(p), RenderObject(obj), Color(c) {};
+	RenderParticle(physics::PhysicsParticle* p, GameObject* obj, glm::vec4 c, float scale) : PhysicsParticle(p), RenderObject(obj), Color(c), scale(scale) {};
 
 	void Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix, glm::mat4 view_matrix);
 };

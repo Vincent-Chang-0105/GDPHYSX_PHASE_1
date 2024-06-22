@@ -4,7 +4,7 @@ OrthoCamera::OrthoCamera() : MyCamera()
 {
 	this->projectionMatrix = projectionMatrix;
 	this->viewMatrix = viewMatrix;
-	projectionMatrix = glm::ortho(-350.f, 350.f, -350.f, 350.f, -350.f, 350.f);
+	projectionMatrix = glm::ortho(-400.f, 400.f, -400.f, 400.f, -400.f, 400.f);
 	viewMatrix = glm::mat4(1.0f); // Initialize as identity matrix
 }
 
