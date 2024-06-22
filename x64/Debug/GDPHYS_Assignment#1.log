@@ -1,0 +1,7 @@
+﻿  main.cpp
+D:\Downloads\GDPHYS_phase1(progress)\GDPHYS_ProgChallenge1\Dependencies\include\GLFW\glfw3.h(3173,1): warning C4819: The file contains a character that cannot be represented in the current code page (949). Save the file in Unicode format to prevent data loss
+  (compiling source file 'main.cpp')
+  
+D:\Downloads\GDPHYS_phase1(progress)\GDPHYS_ProgChallenge1\main.cpp(34,45): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Downloads\GDPHYS_phase1(progress)\GDPHYS_ProgChallenge1\main.cpp(34,31): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  GDPHYS_Assignment#1.vcxproj -> D:\Downloads\GDPHYS_phase1(progress)\GDPHYS_ProgChallenge1\x64\Debug\GDPHYS_Assignment#1.exe
