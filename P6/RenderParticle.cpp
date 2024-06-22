@@ -7,6 +7,6 @@ void RenderParticle::Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix
 
 		RenderObject->color = Color;
 
-		RenderObject->Draw(identity_matrix, projection_matrix, view_matrix);
+		RenderObject->Draw(identity_matrix, projection_matrix, view_matrix, scale);
 	}
 }

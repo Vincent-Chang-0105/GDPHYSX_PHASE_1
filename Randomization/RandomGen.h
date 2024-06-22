@@ -15,6 +15,7 @@ class RandomGen
 		double RandomizeColor();
 		float RandomizeForce();
 		float RandomizeYForce();
+		int RandomizeScale();
 };
 
 

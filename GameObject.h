@@ -10,6 +10,7 @@
 #include "tiny_obj_loader.h"
 
 #include "P6/PhysicsParticle.h"
+#include "Randomization/RandomGen.h"
 #include "Shader.h"
 #include <iostream>
 #include <fstream>
@@ -47,7 +48,7 @@ public:
 	GameObject(std::string Mesh_Path, std::string Vert_Path, std::string Frag_Path);
 	~GameObject();
 
-	void Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix, glm::mat4 view_matrix);
+	void Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix, glm::mat4 view_matrix, float scale);
 
 	void LoadMesh(std::string Mesh_Path);
 	void LoadVertices();

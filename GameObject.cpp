@@ -15,7 +15,6 @@ GameObject::GameObject(std::string Mesh_Path, std::string Vert_Path, std::string
 	this->y = 180.0f;
 	this->z = 0.0f;
 
-	this->scale = 1.f;
 	this->IdentityMatrix = glm::mat4(1.0f);
 }
 
@@ -24,7 +23,7 @@ GameObject::~GameObject()
 
 }
 
-void GameObject::Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix, glm::mat4 view_matrix)
+void GameObject::Draw(glm::mat4 identity_matrix, glm::mat4 projection_matrix, glm::mat4 view_matrix, float scale)
 {
 	glUseProgram(this->shaderProgram);
 

@@ -17,6 +17,11 @@
 using namespace std::chrono_literals;
 constexpr std::chrono::nanoseconds timestep(16ms);
 
+enum class CameraMode {
+    Orthographic,
+    Perspective
+};
+
 int main(void)
 {
     int numObj;
@@ -24,8 +29,8 @@ int main(void)
     std::cin >> numObj;
 
     GLFWwindow* window;
-    float window_width = 700;
-    float window_height = 700;
+    float window_width = 800;
+    float window_height = 800;
 
     using clock = std::chrono::high_resolution_clock;
     auto curr_time = clock::now();
@@ -35,7 +40,7 @@ int main(void)
     if (!glfwInit())
         return -1;
 
-    window = glfwCreateWindow(window_width, window_height, "Phase 1 : Chang_Magaling", NULL, NULL);
+    window = glfwCreateWindow(window_width, window_height, "Phase 1 : Magaling", NULL, NULL);
     if (!window)
     {
         glfwTerminate();
@@ -47,63 +52,38 @@ int main(void)
 
     //OrthoCamera
     auto ortho_camera = new OrthoCamera();
-    ortho_camera->setCameraPosition(glm::vec3(0.0f, 0.0f, 350.0f));
-    ortho_camera->setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
+    ortho_camera->setCameraPosition(glm::vec3(0.0f, 0.0f, 400.0f));
 
     //PerspectiveCamera
     auto pers_camera = new PerspectiveCamera();
-    pers_camera->setCameraPosition(glm::vec3(0, 0.f, 350.f));
-    //pers_camera->setCenter(glm::vec3(0.0f, 0.0f, 0.0f));
+    pers_camera->setCameraPosition(glm::vec3(0, 0.f, 550.f));
 
+    //Initiliaze PhysicsWorld
     auto pWorld = physics::PhysicsWorld();
 
-    //white sphere
+    //sphere
     auto sphere = GameObject("3D/sphere.obj", "Shaders/sample.vert", "Shaders/sample.frag");
 
-    glViewport(0, 0, 700, 700);
+    glViewport(0, 0, 800, 800);
 
-    glm::mat4 identity_matrix = glm::mat4(1.0f);
-
-
-    glm::mat4 projection_matrix = pers_camera->getViewProjection();
-    //glm::mat4 projection_matrix = ortho_camera->getViewProjection();
-
-    // Initialize RenderParticles
+    //Initialize RenderParticles
     std::list<RenderParticle*> RenderParticles;
-    std::chrono::nanoseconds spawnInterval = 200ms; // Time interval between spawns
-    std::chrono::nanoseconds spawnTimer = 0ms;     // Timer to control when to spawn next particle
 
+    //Spawning Variables
+    float fThreshHold = 0.2f;
+    float fTicks = 0.0f;
 
-    /*physics::PhysicsParticle p1 = physics::PhysicsParticle();
-    p1.Position = physics::MyVector(0, 0, 0);
-    p1.mass = 1;
-    p1.AddForce(physics::MyVector(RandomGen().RandomizeForce(), RandomGen().RandomizeForce(), RandomGen().RandomizeForce()));
-    pWorld.AddParticle(&p1);
+    //Default CameraMode
+    CameraMode currentCameraMode = CameraMode::Orthographic;
 
-    RenderParticle rp1 = RenderParticle(&p1, &sphere, glm::vec4(RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), 1.0f));
-
-    RenderParticles.push_back(&rp1);*/
-
-    for (int i = 0; i < numObj; i++) {
-        physics::PhysicsParticle* p = new physics::PhysicsParticle();
-        p->Position = physics::MyVector(0, -100, 0);
-        p->mass = 1;
-        p->AddForce(physics::MyVector(RandomGen().RandomizeForce(), RandomGen().RandomizeYForce(), RandomGen().RandomizeForce()));
-        pWorld.AddParticle(p);
-
-        RenderParticle* rp = new RenderParticle(p, &sphere, glm::vec4(RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), 1.0f));
-        RenderParticles.push_back(rp);
-    }
-
-    std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> startTime(4, clock::now());
-    std::vector<std::chrono::time_point<std::chrono::high_resolution_clock>> endTime(4);
-
-    auto start_time = clock::now();
-
-    bool resultPrinted = false;
-    bool all_finished = false;
-
+    //Matrices
+    glm::mat4 identity_matrix = glm::mat4(1.0f);
+    glm::mat4 projection_matrix = glm::mat4(1.f);
     glm::mat4 view_matrix = glm::mat4(1.0f);
+
+    // Pause/play flag
+    bool paused = false;
+    bool pressed = false;
 
     while (!glfwWindowShouldClose(window))
     {
@@ -115,43 +95,70 @@ int main(void)
 
         curr_ns += dur;
 
+
         if (curr_ns >= timestep) {
             auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(curr_ns);
             curr_ns -= curr_ns;
 
-            //glm::mat4 projection_matrix = pers_camera->getViewProjection();
-            glm::mat4 projection_matrix = ortho_camera->getViewProjection();
-            
-            ortho_camera->Update(window, (float)ms.count() / 1000);
+            //Key inputs
+            if (glfwGetKey(window, GLFW_KEY_1))
+            {
+                std::cout << "Switching to Orthographic Camera" << std::endl;
+                currentCameraMode = CameraMode::Orthographic;
+            }
+            if (glfwGetKey(window, GLFW_KEY_2))
+            {
+                std::cout << "Switching to Perspective Camera" << std::endl;
+                currentCameraMode = CameraMode::Perspective;
+            }
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !pressed)
+            {
+                paused = !paused; // Toggle pause/play
+                std::cout << (paused ? "Paused" : "Resumed") << std::endl;
+                pressed = true;
+            }
+            if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE)
+            {
+                pressed = false;
+            }
 
-            pWorld.Update((float)ms.count() / 1000);
+            // Update cameras based on mode
+            if (currentCameraMode == CameraMode::Orthographic) {
+                projection_matrix = ortho_camera->getViewProjection();
+                ortho_camera->Update(window, (float)ms.count() / 1000);
+                view_matrix = ortho_camera->GetViewMatrix();
+            }
+            else if (currentCameraMode == CameraMode::Perspective) {
+                projection_matrix = pers_camera->getViewProjection();
+                pers_camera->Update(window, (float)ms.count() / 1000);
+                view_matrix = pers_camera->GetViewMatrix();
+            }
 
-            // Update spawn timer
-            ////spawnTimer += dur;
-            // 
-            // 
-            //std::cout << spawnTimer.count() << std::endl;
-            // 
-            // Spawn new RenderParticle if spawn interval has passed
-            //if (spawnTimer >= spawnInterval)
-            //{
-            //    physics::PhysicsParticle* particle = new physics::PhysicsParticle();
-            //    particle->Position = physics::MyVector(0, 0, 0);
-            //    particle->mass = 1;
-            //    particle->AddForce(physics::MyVector(0, 1000.f, 0));
-            //    particle->AddLifeSpan();
-            //    pWorld.AddParticle(particle);
+            if (!paused) {
+                pWorld.Update((float)ms.count() / 1000);
 
-            //    RenderParticle* renderParticle = new RenderParticle(particle, &sphere, glm::vec4(0.0f, 1.0f, 0.0f, 1.0f));
-            //    RenderParticles.push_back(renderParticle);
+                // Update spawn timer
+                fTicks += (float)ms.count() / 1000;
 
-            //    // Reset spawn timer
-            //    spawnTimer = 0ms;
-            //}
+                if (fTicks >= fThreshHold && RenderParticles.size() <= numObj)
+                {
+                    for (int i = 0; i < 10; i++) {
+                        physics::PhysicsParticle* p = new physics::PhysicsParticle();
+                        p->Position = physics::MyVector(0, -100, 0);
+                        p->mass = 1;
+                        p->AddForce(physics::MyVector(RandomGen().RandomizeForce(), RandomGen().RandomizeYForce(), RandomGen().RandomizeForce()));
+                        pWorld.AddParticle(p);
+
+                        RenderParticle* rp = new RenderParticle(p, &sphere, glm::vec4(RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), RandomGen().RandomizeColor(), 1.0f), RandomGen().RandomizeScale());
+                        RenderParticles.push_back(rp);
+                    }
+                    fTicks = 0;
+                }
+            }
         }
 
         for (std::list<RenderParticle*>::iterator i = RenderParticles.begin(); i != RenderParticles.end(); i++) {
-            (*i)->Draw(identity_matrix, projection_matrix, ortho_camera->GetViewMatrix());
+            (*i)->Draw(identity_matrix, projection_matrix, view_matrix);
         }
 
         glfwSwapBuffers(window);
